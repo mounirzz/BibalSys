@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template">
+<head>
+<meta charset="UTF-8" />
+<title>Usagers</title>
+
+<script th:src="@{/js/jquery.js}" src="/js/jquery.js"></script>
+<link rel="stylesheet" type="text/css"
+	th:href="@{//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css}"
+	href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+<script
+	th:src="@{//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js}"
+	src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js">
+	
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#datatable').dataTable();
+	});
+</script>
+
+<script type="text/javascript">
+	$(".btn[data-target='#update']")
+			.click(
+					function() {
+						var columnHeadings = $("thead th").map(function() {
+							return $(this).text();
+						}).get();
+						columnHeadings.pop();
+						var columnValues = $(this).parent().siblings().map(
+								function() {
+									return $(this).text();
+								}).get();
+						var modalBody = $('<div id="modalContent"></div>');
+						var modalForm = $('<form role="form" name="modalForm" th:action="@{/addUsager}" method="post"></form>');
+						$
+								.each(
+										columnHeadings,
+										function(i, columnHeader) {
+											var formGroup = $('<div class="form-group"></div>');
+											formGroup
+													.append('<label for="'+columnHeader+'">'
+															+ columnHeader
+															+ '</label>');
+											formGroup
+													.append('<input class="form-control" name="'+columnHeader+i+'" id="'+columnHeader+i+'" value="'+columnValues[i]+'" />');
+											modalForm.append(formGroup);
+										});
+						modalBody.append(modalForm);
+						$('.modal-body').html(modalBody);
+					});
+	$('.modal-footer .btn-primary').click(function() {
+		$('form[name="modalForm"]').submit();
+	});
+</script>
+
+</head>
+<body>
+	<section layout:fragment="custom-content">
+		<div class="col-md-21" id="sectionPrincipale">
+
+			<div class="panel panel-inverse">
+				<div class="panel-heading" style="text-align: center">
+					<b>Gestion des usagers</b>
+				</div>
+				<div class="panel-body">
+
+					<form th:action="@{/allUsagers}" method="get">
+
+						<button type="button" style="float: right;"
+							class="btn btn-lg btn-success left-rounded" data-toggle="modal"
+							data-target="#add">
+							<span class="glyphicon glyphicon-plus"></span> Nouveau Usager
+						</button>
+
+
+						<div id="usagerDataTable" class="col-sm-24" align="center">
+							<table id="datatable"
+								class="table table-striped table-bordered dataTable"
+								cellspacing="0">
+								<thead>
+									<tr role="row">
+										<th class="sorting_asc" tabindex="0"
+											aria-controls="myDataTable" rowspan="1" colspan="1"
+											style="text-align: center;" aria-sort="ascending"
+											aria-label="Id: activate to sort column descending">Id</th>
+										<th class="sorting" tabindex="0" aria-controls="myDataTable"
+											rowspan="1" colspan="1" style="text-align: center;"
+											aria-label="Nom: activate to sort column ascending">Nom</th>
+										<th class="sorting" tabindex="0" aria-controls="myDataTable"
+											rowspan="1" colspan="1" style="text-align: center;"
+											aria-label="Prenom: activate to sort column ascending">Prenom</th>
+										<th class="sorting" tabindex="0" aria-controls="myDataTable"
+											rowspan="1" colspan="1" style="text-align: center;"
+											aria-label="Adresse: activate to sort column ascending">Adresse</th>
+										<th class="sorting" tabindex="0" aria-controls="myDataTable"
+											rowspan="1" colspan="1" style="text-align: center;"
+											aria-label="Mail: activate to sort column ascending">Mail</th>
+										<th class="sorting" tabindex="0" aria-controls="myDataTable"
+											rowspan="1" colspan="1" style="text-align: center;"
+											aria-label="Telephone: activate to sort column ascending">Telephone</th>
+										<th class="sorting" tabindex="0" aria-controls="myDataTable"
+											rowspan="1" colspan="1" style="text-align: center;"
+											aria-label="Action: activate to sort column ascending">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="odd" role="row" th:each="u:${allUsagers}"
+										th:id="${u.etat}">
+										<td style="text-align: center" th:text="${u.idUsager}"></td>
+										<td style="text-align: center" th:text="${u.nom}"></td>
+										<td style="text-align: center" th:text="${u.prenom}"></td>
+										<td style="text-align: center" th:text="${u.adresse}"></td>
+										<td style="text-align: center" th:text="${u.mail}"></td>
+										<td style="text-align: center" th:text="${u.tel}"></td>
+										<td style="text-align: center">
+
+											<button th:if="${u.etat}!='Client'" type="button"
+												class="btn btn-success" data-toggle="modal"
+												data-target="#activerUsager"
+												th:onclick="|getIdUsager(${u.idUsager})|">
+												<span class="glyphicon glyphicon-ok"></span>
+											</button>
+
+											<button type="button" class="btn btn-warning update"
+												data-toggle="modal" data-target="#update">
+												<span class="glyphicon glyphicon-edit"></span>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</form>
+
+
+					<div class="modal fade" id="activerUsager" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="addModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Activer
+										usager</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/activer}" method="get">
+										<input type="hidden" name="idUsager" value="" />
+										<p>Voulez-vous reactiver l'usager ?</p>
+										<button type="submit" class="btn btn-success">
+											<span class="glyphicon glyphicon-ok"></span> Oui
+										</button>
+										<button type="button" class="btn">Annuler</button>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="modal fade" id="add" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="addModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Ajouter
+										nouveau Livre</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/addUsager}" method="post">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="control-label">Prenom</label> <input
+													name="prenom" type="text" class="form-control" id="prenom" />
+											</div>
+											<div class="form-group">
+												<label class="control-label">Nom</label> <input name="nom"
+													type="text" class="form-control" id="nom" />
+											</div>
+											<div class="form-group">
+												<label class="control-label">Adresse</label> <input
+													name="adresse" type="text" class="form-control"
+													id="adresse" />
+											</div>
+											<div class="form-group">
+												<label class="control-label">Adresse email</label> <input
+													name="mail" type="email" class="form-control" id="email" />
+												<span class="help">Format: nom@fournisseur.pays</span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Telephone</label> <input
+													name="tel" type="text" class="form-control" id="tel" /> <span
+													class="help">Format: +212 ***********</span>
+											</div>
+											<div class="form-group">
+												<button type="submit" class="btn btn-success">
+													<i class="glyphicon glyphicon-ok"></i>Ajouter
+												</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="modal fade" id="update" role="dialog"
+						aria-labelledby="myModalLabel">
+
+						<div class="modal-dialog">
+							<div class="modal-content"></div>
+						</div>
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header update">
+									<button type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true" class="">×</span><span
+											class="sr-only">Close</span>
+
+									</button>
+									<h4 class="modal-title" id="myModalLabel">Modifier usager</h4>
+
+								</div>
+
+								<div class="modal-body update"></div>
+								<div class="modal-footer update">
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">Fermer</button>
+									<button type="button" class="btn btn-warning">Modifier</button>
+								</div>
+
+							</div>
+						</div>
+						<!-- 
+						<div class="modal-dialog">
+
+							
+							<div class="modal-content">
+								<div class="modal-header" id="updateModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Modifier
+										Le Livre numéro : 125</h3>
+								</div>
+								<div class="modal-body">
+									<form action="#" method="post">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="control-label">Nom</label> <input name="nom"
+													type="text" class="form-control" /> <span
+													class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Thématique</label> <input
+													name="thematique" type="text" class="form-control" />
+												
+												<span class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Auteur</label> <input
+													name="auteur" type="text" class="form-control" /> <span
+													class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<button type="submit" class="btn btn-warning">
+													<span class="glyphicon glyphicon-edit"></span> Modifier
+												</button>
+												<button type="submit" class="btn btn-secondary" data-dismiss="modal">
+													Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						 -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<script
+			th:src="@{http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js}"></script>
+		<script
+			src="@{http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+
+		<script type="text/javascript">
+			function getIdUsager(idUsager){
+				document.getElementsByName("idUsager")[0].value = idUsager;
+			}
+		</script>
+
+		<script>
+			$(".update[data-target='#update']")
+					.click(
+							function() {
+								var columnHeadings = $("thead th").map(
+										function() {
+											return $(this).text();
+										}).get();
+								columnHeadings.pop();
+								var columnValues = $(this).parent().siblings()
+										.map(function() {
+											return $(this).text();
+										}).get();
+								var modalBody = $('<div id="modalContent"></div>');
+								var modalForm = $('<form role="form" name="updateForm" th:action="@{/updateUsager}" method="post"></form>');
+								$
+										.each(
+												columnHeadings,
+												function(i, columnHeader) {
+													var formGroup = $('<div class="form-group"></div>');
+													formGroup
+															.append('<label for="'+columnHeader+'">'
+																	+ columnHeader
+																	+ '</label>');
+													formGroup
+															.append('<input class="form-control" name="'+columnHeader+'0" id="'+columnHeader+'0" value="'+columnValues[i]+'" />');
+													modalForm.append(formGroup);
+												});
+								modalBody.append(modalForm);
+								$('.modal-body.update').html(modalBody);
+							});
+			$('.modal-footer.update .btn-success').click(function() {
+				$('form[name="updateForm"]').submit();
+			});
+		</script>
+
+	</section>
+</body>
+</html>

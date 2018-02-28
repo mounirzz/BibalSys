@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>template</title>
+	
+	<link rel="stylesheet" th:href="@{/css/bootstrap/css/bootstrap.min.css}" href="/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" th:href="@{/css/bootstrap/css/bootstrap.css}" href="/css/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" th:href="@{https://fonts.googleapis.com/css?family=Cookie}" href="https://fonts.googleapis.com/css?family=Cookie" />
+	<link rel="stylesheet" th:href="@{/css/myCss.css}" href="/css/myCss.css" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-select.css}" href="/css/bootstrap-select.css" />
+	<!-- 
+	<link rel="stylesheet" type="text/css" th:href="@{https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.css}" href="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.css"/>
+	<script type="text/javascript" th:src="@{https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js}" src="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js"></script>
+	<script th:src="@{/js/jquery-1.12.4.js}" src="/js/jquery-1.12.4.js"></script>
+	 -->
+	
+	<script type="text/javascript" th:src="@{//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js}" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/dataTables.bootstrap.min.css}" href="/css/dataTables.bootstrap.min.css" />
+	<script th:src="@{/js/jquery.js}" src="/js/jquery.js"></script>
+	<script th:src="@{/css/bootstrap/js/bootstrap.min.js}" src="/css/bootstrap/js/bootstrap.min.js"></script>
+	<script th:src="@{/js/jquery.dataTables.min.js}" src="/js/jquery.dataTables.min.js"></script>
+	<script th:src="@{/js/dataTables.bootstrap.min.js}" src="/js/dataTables.bootstrap.min.js"></script>	
+	<script th:src="@{/js/bootstrap-select.js}" src="/js/bootstrap-select.js"></script>	
+	
+	
+</head>
+
+<body>
+	<header>
+		<img class="img-responsive" th:src="@{/images/library-header.jpg}" />
+		<nav class="navbar navbar-default custom-header">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed"
+						data-toggle="collapse" data-target="#navbar-collapse">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand navbar-link" th:href="@{/index}"> Bibal</a>
+				</div>
+				<div class="collapse navbar-collapse" id="navbar-collapse">
+					<div class="collapse navbar-collapse" id="navbar-collapse">
+						<ul class="nav navbar-nav navbar-right links">
+							<li role="presentation"><a href="index" th:href="@{/index}"><span
+									class="glyphicon glyphicon-home"></span><strong>
+										Accueil</strong></a></li>
+							<li role="presentation"><a href="ListeUsagers"
+								th:href="@{/ListeUsagers}"><span
+									class="glyphicon glyphicon-user"></span><strong>
+										Usagers</strong></a></li>
+							<li role="presentation"><a href="Livres"
+								th:href="@{/Livres}"><span class="glyphicon glyphicon-book"></span><strong>
+										Livres</strong></a></li>
+							<li role="presentation"><a href="Magazines"
+								th:href="@{/Magazines}"><span
+									class="glyphicon glyphicon-file"></span><strong>
+										Magazines</strong></a></li>
+							<li role="presentation"><a href="Emprunts"
+								th:href="@{/Emprunts}"><span
+									class="glyphicon glyphicon-transfer"></span><strong>
+										Emprunts</strong></a></li>
+							<li role="presentation"><a href="Reservations"
+								th:href="@{/Reservations}"><span
+									class="glyphicon glyphicon-tasks"></span><strong>
+										Réservations</strong></a></li>
+							<li role="presentation"><a href="About"
+								th:href="@{/About}"><span
+									class="glyphicon glyphicon-info-sign"></span><strong>
+										About</strong></a></li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right"></ul>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<section layout:fragment="custom-content" style="min-height: 300px">
+		<p>Your page content goes here</p>
+	</section>
+	<footer class="footer">
+		<div>
+			<p>@Authors: Said Idrissi &amp; Mohammed Anas Bahnini -
+				Université de Lorraine - ISGA Rabat - 2017</p>
+		</div>
+	</footer>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

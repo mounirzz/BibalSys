@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template">
+<head>
+<meta charset="UTF-8" />
+<title>Livres</title>
+
+<script th:src="@{/js/jquery.js}" src="/js/jquery.js"></script>
+<link rel="stylesheet" type="text/css"
+	th:href="@{//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css}"
+	href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+<script
+	th:src="@{//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js}"
+	src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js">
+	
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#exemplairedatatable').dataTable();
+	});
+</script>
+
+</head>
+<body>
+	<section layout:fragment="custom-content" style="min-height: 240">
+
+		<div class="btn-group" id="Precedent">
+			<a th:href="@{/Livres}" href="Livres" class="btn btn-inverse active">
+				<span class="glyphicon glyphicon-arrow-left"></span> Revenir aux
+				livres
+			</a>
+		</div>
+
+		<div class="col-md-11" id="livreInfo">
+			<div class="panel panel-info panel-inverse">
+				<div class="panel-heading" style="text-align: center">
+					<h3 class="panel-title">Informations</h3>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<h4 style="text-align: center">
+							<b><label th:text="${livre.nom}"></label></b>
+						</h4>
+						<br />
+						<!-- we can add an image here 
+						<div class="col-md-5 col-lg-5 " align="center">
+							<img alt="Image" class="img-responsive"
+								th:src="@{/images/engInHistory.jpg}"
+								src="/images/engInHistory.jpg" />
+						</div>
+						-->
+						<div class="col-md-22 col-lg-22 ">
+							<table class="table table-user-information">
+								<tbody>
+									<tr>
+										<td>Id:</td>
+										<td th:text="${livre.idOeuvre}"></td>
+									</tr>
+									<tr>
+										<td>Auteur:</td>
+										<td th:text="${livre.ecrivain}"></td>
+									</tr>
+									<tr>
+										<td>Thématique:</td>
+										<td th:text="${livre.thematique}"></td>
+									</tr>
+									<tr>
+										<td>Nombre d'exemplaires</td>
+										<td th:text="${nbrExempl}"></td>
+									</tr>
+									<tr>
+										<td>Nombre d'exemplaires disponibles:</td>
+										<td th:text="${nbrExemplDispo}"></td>
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+					<button th:if="${nbrExemplDispo}==0" type="submit"
+						class="btn btn-sm btn-success" data-toggle="modal"
+						data-target="#addReservation">
+						<span class="glyphicon glyphicon-ok"></span> Reserver
+					</button>
+					<span class="pull-right">
+						<button type="submit" class="btn btn-sm btn-warning"
+							data-toggle="modal" data-target="#update">
+							<span class="glyphicon glyphicon-edit"></span> Modifier
+						</button>
+
+					</span>
+				</div>
+
+				<div class="panel-footer"></div>
+
+			</div>
+		</div>
+
+
+
+		<div class="col-md-10" id="ExemplaireLivreInfo">
+			<div class="panel panel-inverse">
+				<div class="panel-heading" style="text-align: center">
+					<h3 class="panel-title">Exemplaires</h3>
+				</div>
+				<div class="panel-body">
+
+					<button type="button" style="float: right;" id="addExemplaireBtn"
+						class="btn btn-success left-rounded" data-toggle="modal"
+						data-target="#addExemplaire">
+						<span class="glyphicon glyphicon-plus"></span> Nouveau exemplaire
+					</button>
+
+
+					<div class="col-sm-24" align="center" id="exemplairedatatableDiv">
+						<table id="exemplairedatatable"
+							class="table table-striped table-bordered dataTable"
+							cellspacing="0">
+							<thead>
+								<tr role="row">
+									<th class="sorting_asc" tabindex="0"
+										aria-controls="myDataTable" rowspan="1" colspan="1"
+										style="text-align: center;" aria-sort="ascending"
+										aria-label="Name: activate to sort column descending">ID
+										Exemplaire</th>
+									<th class="sorting" tabindex="0" aria-controls="myDataTable"
+										rowspan="1" colspan="1" style="text-align: center;"
+										aria-label="Position: activate to sort column ascending">Disponibilité</th>
+									<th class="sorting" tabindex="0" aria-controls="myDataTable"
+										rowspan="1" colspan="1" style="text-align: center;"
+										aria-label="Start date: activate to sort column ascending">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="odd" role="row" th:each="e,index :${exemplaires}">
+									<!-- <h1 th:text="${index.index}"></h1> -->
+									<td style="text-align: center" th:text="${e.idExemplaire}"></td>
+									<td style="text-align: center" th:class="${dispo[index.index]}"
+										th:text="${dispo[index.index]}"></td>
+									<td style="text-align: center">
+
+										<button th:if="${dispo[index.index]}=='Disponible'"
+											type="button" class="btn btn-sm btn-success"
+											data-toggle="modal" data-target="#addEmprunt"
+											th:onclick="|getIdExemp(${e.idExemplaire})|">
+											<span class="glyphicon glyphicon-ok"></span> Emprunter
+										</button>
+										<button th:if="${dispo[index.index]}=='Disponible'"
+											type="submit" class="btn btn-sm btn-warning"
+											data-toggle="modal" data-target="#updateExemplaire"
+											th:onclick="|getIdExemp(${e.idExemplaire})|">
+											<span class="glyphicon glyphicon-edit"></span>
+										</button>
+
+										<button th:if="${dispo[index.index]}=='Emprunte'"
+											type="button" class="btn btn-sm btn-primary"
+											data-toggle="modal" data-target="#rendre"
+											th:onclick="|getIdExemp(${e.idExemplaire})|">
+											<span class="glyphicon glyphicon-share-alt"></span> Rendre
+										</button>
+									</td>
+								</tr>
+								<!-- <tr class="odd" role="row">
+									<td style="text-align: center">2</td>
+									<td style="text-align: center" class="disponible">Disponible</td>
+									<td style="text-align: center">
+										<button type="button" class="btn btn-sm btn-success"
+											data-toggle="modal" data-target="#addEmprunt">
+											<span class="glyphicon glyphicon-ok"></span> Emprunter
+										</button>
+										<button type="submit" class="btn btn-sm btn-warning"
+											data-toggle="modal" data-target="#update">
+											<span class="glyphicon glyphicon-edit"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="odd" role="row">
+									<td style="text-align: center">3</td>
+									<td style="text-align: center" class="emprunte">Emprunté</td>
+									<td style="text-align: center">
+										<button type="button" class="btn btn-sm btn-primary"
+											data-toggle="modal" data-target="#rendre">
+											<span class="glyphicon glyphicon-share-alt"></span> Rendre
+										</button>
+									</td>
+								</tr> -->
+							</tbody>
+						</table>
+					</div>
+
+					<div class="modal fade" id="addExemplaire" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="addModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Ajouter
+										nouveau exemplaire</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/addExemplaireL}" method="get">
+										<input type="hidden" name="idLivre"
+											th:value="${livre.idOeuvre}" />
+										<p>Voulez-vous vraiment ajouter un nouvel exemplaire ?</p>
+										<button type="submit" class="btn btn-success"
+											data-toggle="modal" data-target="#DetailLivre">
+											<span class="glyphicon glyphicon-ok"></span> Oui
+										</button>
+										<button type="button" class="btn" data-toggle="modal"
+											data-target="#DetailLivre">Annuler</button>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="modal fade" id="updateExemplaire" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="updateModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">
+										Exemplaire <label id="idExemplaire"></label>
+									</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/updateEtatExemplaireL}" method="get">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="control-label">Oeuvre</label> <label
+													class="form-control" th:text="${livre.nom}"></label> <span
+													class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Etat de l'exemplaire</label> <select
+													class="form-control" name="etatExemplaire">
+													<option value="Bonne">Bonne</option>
+													<option value="mauvaiseEtat">Mauvaise</option>
+													<option value="perime">Vieux</option>
+												</select> <span class="has-error"></span> <small
+													class="form-text text-muted">Les mauvais et vieux
+													exemplaires sont automatiquement retirés de la liste des
+													exemplaires.</small>
+											</div>
+											<input type="hidden" name="idExemplaireU" value="" /> <input
+												type="hidden" name="idLivre" th:value="${livre.idOeuvre}" />
+											<div class="form-group">
+												<button type="submit" class="btn btn-warning">
+													<span class="glyphicon glyphicon-edit"></span> Modifier
+												</button>
+												<button type="button" class="btn">Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+
+					<div class="modal fade" id="rendre" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="rendreModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">
+										Exemplaire <label id="idExemplaire2"></label>
+									</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/rendreL}" method="get">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="control-label">Etat de l'exemplaire</label> <select
+													class="form-control" name="etatExemplaire">
+													<option value="Bonne">Bonne</option>
+													<option value="mauvaiseEtat">Mauvaise</option>
+													<option value="perime">Vieux</option>
+												</select> <span class="has-error"></span>
+											</div>
+											<input type="hidden" name="idExemplaireR" value="" /> <input
+												type="hidden" name="idLivre" th:value="${livre.idOeuvre}" />
+											<div class="form-group">
+												<button type="submit" class="btn btn-success">
+													<span class="glyphicon glyphicon-ok"></span> Rendre
+												</button>
+												<button type="submit" class="btn">Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="modal fade" id="addEmprunt" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="addModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Nouveau
+										emprunt</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/addEmprunt}" method="get">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="col-md-6 control-label" for="lunch">Usager
+													:</label> <select id="lunch" name="idUsager" class="selectpicker"
+													data-live-search="true" title="Choisir usager ...">
+													<option th:each="u :${usagers}" th:value="${u.idUsager}"><label
+															th:text="${u.nom}"></label> <label th:text="${u.prenom}"></label></option>
+												</select>
+											</div>
+											<input type="hidden" name="idExemplaireA" value="" /> <input
+												type="hidden" name="page" value="detailLivre" /><input
+												type="hidden" name="idLivre" th:value="${livre.idOeuvre}" />
+											<div class="form-group">
+												<button type="submit" class="btn btn-success">
+													<span class="glyphicon glyphicon-ok"></span> Emprunter
+												</button>
+												<button type="reset" class="btn">Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="modal fade" id="addReservation" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="addModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Nouveau
+										Reservation</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/addReservationL}" method="get">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="col-md-6 control-label" for="lunch">Usager
+													:</label> <select id="lunch" name="idUsager" class="selectpicker"
+													data-live-search="true" title="Choisir usager ...">
+													<option th:each="u :${usagers}" th:value="${u.idUsager}"><label
+															th:text="${u.nom}"></label> <label th:text="${u.prenom}"></label></option>
+												</select>
+											</div>
+											<input type="hidden" name="idLivre"
+												th:value="${livre.idOeuvre}" />
+											<div class="form-group">
+												<button type="submit" class="btn btn-success">
+													<span class="glyphicon glyphicon-ok"></span> Resserver
+												</button>
+												<button type="reset" class="btn">Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+
+					<div class="modal fade" id="update" role="dialog">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="updateModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">
+										Modifier Le Livre numéro : <label th:text="${livre.idOeuvre}"></label>
+									</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/updateLivre}" method="post">
+										<div class="form-group">
+											<input type="hidden" name="idLivre"
+												th:value="${livre.idOeuvre}" />
+											<div class="form-group">
+												<label class="control-label">Nom</label> <input name="nom"
+													type="text" class="form-control" th:value="${livre.nom}" />
+												<span class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Thématique</label> <input
+													name="thematique" type="text" class="form-control"
+													th:value="${livre.thematique}" />
+												<!--<select class="form-control" name="thematique">
+                                                <option>...</option>
+                                                <option>test1</option>
+                                                <option>test2</option>
+                                            </select>-->
+												<span class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Auteur</label> <input
+													name="auteur" type="text" class="form-control"
+													th:value="${livre.ecrivain}" /> <span class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<button type="submit" class="btn btn-warning">
+													<span class="glyphicon glyphicon-edit"></span> Modifier
+												</button>
+												<button type="button" class="btn">Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+				</div>
+				<div class="panel-footer"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function getIdExemp(idExemp) {
+				document.getElementsByName("idExemplaireA")[0].value = idExemp;
+				document.getElementsByName("idExemplaireR")[0].value = idExemp;
+				document.getElementsByName("idExemplaireU")[0].value = idExemp;
+				document.getElementById("idExemplaire").innerHTML = idExemp;
+				document.getElementById("idExemplaire2").innerHTML = idExemp;
+			}
+		</script>
+	</section>
+</body>
+</html>

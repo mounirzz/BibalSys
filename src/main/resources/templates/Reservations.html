@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template">
+<head>
+<meta charset="UTF-8" />
+<title>Réservations</title>
+
+<script th:src="@{/js/jquery.js}" src="/js/jquery.js"></script>
+<link rel="stylesheet" type="text/css"
+	th:href="@{//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css}"
+	href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+<script
+	th:src="@{//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js}"
+	src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js">
+	
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#datatable').dataTable({
+			"order" : [ [ 3, "asc" ] ]
+		});
+	});
+</script>
+
+</head>
+<body>
+	<section layout:fragment="custom-content">
+		<div class="col-md-21" id="sectionPrincipale">
+
+			<div class="panel panel-inverse">
+				<div class="panel-heading" style="text-align: center">
+					<b>Gestion des réservations</b>
+				</div>
+				<div class="panel-body">
+
+
+
+					<button type="button" style="float: right;"
+						class="btn btn-lg btn-success left-rounded" data-toggle="modal"
+						data-target="#addReservation">
+						<span class="glyphicon glyphicon-plus"></span> Nouvelle
+						réservation
+					</button>
+
+					<div id="livreDataTable" class="col-sm-20" align="center">
+						<table id="datatable"
+							class="table table-striped table-bordered dataTable"
+							cellspacing="0">
+							<thead>
+								<tr role="row">
+									<th class="sorting_desc" tabindex="0"
+										aria-controls="myDataTable" rowspan="1" colspan="1"
+										style="text-align: center;" aria-sort="descending"
+										aria-label="Name: activate to sort column descending">Id</th>
+									<th class="sorting" tabindex="0" aria-controls="myDataTable"
+										rowspan="1" colspan="1" style="text-align: center;"
+										aria-label="Position: activate to sort column ascending">Oeuvre</th>
+									<th class="sorting" tabindex="0" aria-controls="myDataTable"
+										rowspan="1" colspan="1" style="text-align: center;"
+										aria-label="Office: activate to sort column ascending">Usager</th>
+									<th class="sorting" tabindex="0" aria-controls="myDataTable"
+										rowspan="1" colspan="1" style="text-align: center;"
+										aria-label="Age: activate to sort column ascending">Date</th>
+									<th class="sorting" tabindex="0" aria-controls="myDataTable"
+										rowspan="1" colspan="1" style="text-align: center;"
+										aria-label="Start date: activate to sort column ascending">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="odd" role="row" th:each="r:${reservations}">
+									<td style="text-align: center" th:text="${r.idReservation}"></td>
+									<td style="text-align: center" th:text="${r.oeuvre.nom}"></td>
+									<td style="text-align: center"
+										th:text="${r.user.nom + ' ' +r.user.prenom}"></td>
+									<td style="text-align: center" th:text="${r.date}"></td>
+									<td style="text-align: center">
+										<!-- <button type="button" class="btn btn-success"
+											data-toggle="modal" data-target="#emprunter">
+											<span class="glyphicon glyphicon-ok"></span> Emprunter
+										</button> -->
+
+										<button type="button" class="btn btn-danger"
+											data-toggle="modal" data-target="#annuler"
+											th:onclick="|getIdRes(${r.idReservation})|">
+											<span class="glyphicon glyphicon-remove"></span> annuler
+										</button>
+
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="modal fade" id="addReservation" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="addModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Nouveau
+										Reservation</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/addReservationPage}" method="get">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="col-md-6 control-label" for="lunch">Usager
+													:</label> <select id="lunch" name="idUsager" class="selectpicker"
+													data-live-search="true" title="Choisir usager ...">
+													<option th:each="u :${usagers}" th:value="${u.idUsager}"><label
+															th:text="${u.nom}"></label> <label th:text="${u.prenom}"></label></option>
+												</select>
+											</div>
+											<div class="form-group">
+												<label class="col-md-6 control-label" for="lunch">Oeuvre
+													:</label> <select id="lunch" name="idLivre" class="selectpicker"
+													data-live-search="true" title="Choisir oeuvre ...">
+													<option th:each="o :${livres}" th:value="${o.idOeuvre}"><label
+															th:text="${o.nom}"></label></option>
+													<option th:each="o :${magazines}" th:value="${o.idOeuvre}"><label
+															th:text="${o.nom}"></label></option>
+												</select>
+											</div>
+											<div class="form-group">
+												<button type="submit" class="btn btn-success">
+													<span class="glyphicon glyphicon-ok"></span> Resserver
+												</button>
+												<button type="reset" class="btn">Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="modal fade" id="annuler" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="addModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Annuler
+										Reservation</h3>
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/annulerReservation}" method="get">
+										<div class="form-group">
+											<span>voulez vous vraiment annuler la reservation
+												numéro : <label id="idReservation"></label>
+											</span> <input type="hidden" name="idReservation" value="" />
+											<div class="form-group">
+												<button type="submit" class="btn btn-success">
+													<span class="glyphicon glyphicon-ok"></span> Annuler
+												</button>
+												<button type="button" class="btn">Quitter</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+
+					<div class="modal fade" id="rendre" role="dialog"
+						style="display: none;" aria-hidden="true">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header" id="rendreModalHeader">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title" style="text-align: center">Exemplaire
+										: 1</h3>
+								</div>
+								<div class="modal-body">
+									<form action="#" method="post">
+										<div class="form-group">
+											<div class="form-group">
+												<label class="control-label">Oeuvre</label> <label
+													class="form-control">Engineering in history</label> <span
+													class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Emprunteur</label> <label
+													class="form-control">nameFromDB</label> <span
+													class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Date</label> <label
+													class="form-control">SysDate</label> <span
+													class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<label class="control-label">Etat de l'exemplaire</label> <select
+													class="form-control" name="thematique">
+													<option>Bon</option>
+													<option>Mauvais</option>
+													<option>Vieux</option>
+												</select> <span class="has-error"></span>
+											</div>
+											<div class="form-group">
+												<button type="submit" class="btn btn-success">
+													<span class="glyphicon glyphicon-ok"></span> Rendre
+												</button>
+												<button type="submit" class="btn">Annuler</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			function getIdRes(idRes) {
+				document.getElementsByName("idReservation")[0].value = idRes;
+				document.getElementById("idReservation").innerHTML = idRes;
+			}
+		</script>
+
+	</section>
+</body>
+</html>

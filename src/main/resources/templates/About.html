@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template">
+
+
+<head>
+<meta charset="UTF-8" />
+<title>Livres</title>
+
+<script th:src="@{/js/jquery.js}" src="/js/jquery.js"></script>
+<link rel="stylesheet" type="text/css"
+	th:href="@{//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css}"
+	href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+<script
+	th:src="@{//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js}"
+	src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js">
+	
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#datatable').dataTable();
+	});
+</script>
+
+</head>
+<body>
+	<section layout:fragment="custom-content" >
+		
+	</section>
+</body>
+
+</html>
